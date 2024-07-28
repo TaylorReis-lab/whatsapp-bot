@@ -1,4 +1,5 @@
 const twilio = require("twilio");
+const querystring = require("querystring");
 
 exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
@@ -7,8 +8,15 @@ exports.handler = async (event, context) => {
   let message = "";
 
   try {
-    // Parse the body of the request safely
-    const parsedBody = event.body ? JSON.parse(event.body) : {};
+    // Log the raw body for debugging
+    console.log("Raw body:", event.body);
+
+    let parsedBody = {};
+    if (event.headers["content-type"] === "application/json") {
+      parsedBody = JSON.parse(event.body);
+    } else {
+      parsedBody = querystring.parse(event.body);
+    }
 
     // Check if Body property exists
     message = parsedBody.Body ? parsedBody.Body.toLowerCase() : "";
