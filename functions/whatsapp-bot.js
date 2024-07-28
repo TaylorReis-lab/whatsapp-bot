@@ -6,12 +6,12 @@ exports.handler = async (event, context) => {
   const twiml = new MessagingResponse();
 
   let message = "";
+  let parsedBody = {};
 
   try {
     // Log the raw body for debugging
     console.log("Raw body:", event.body);
 
-    let parsedBody = {};
     if (event.headers["content-type"] === "application/json") {
       parsedBody = JSON.parse(event.body);
     } else {
@@ -30,42 +30,52 @@ exports.handler = async (event, context) => {
   if (message.includes("oi")) {
     twiml.message("Olá! Como posso ajudar você hoje?");
   } else if (message.includes("ajuda")) {
-    const listMessage = {
-      to: parsedBody.From,
-      from: parsedBody.To,
-      body: "O que deseja fazer primeiro?",
-      persistentAction: ["geo:37.787890,-122.391664", "tel:+14155238886"],
-      action: "uri",
-      button: "Escolher",
-      sections: [
-        {
-          title: "Opções",
-          rows: [
-            {
-              id: "1",
-              title: "Informações sobre nós",
-            },
-            {
-              id: "2",
-              title: "Suporte técnico",
-            },
-            {
-              id: "3",
-              title: "Fale com um representante",
-            },
-            {
-              id: "4",
-              title: "Ver nossos produtos",
-            },
-          ],
-        },
-      ],
-    };
     const client = twilio(
       process.env.TWILIO_ACCOUNT_SID,
       process.env.TWILIO_AUTH_TOKEN
     );
-    await client.messages.create(listMessage);
+    const listMessage = {
+      to: parsedBody.From,
+      from: parsedBody.To,
+      type: "interactive",
+      interactive: {
+        type: "list",
+        body: {
+          text: "O que deseja fazer primeiro?",
+        },
+        action: {
+          button: "Escolher",
+          sections: [
+            {
+              title: "Opções",
+              rows: [
+                {
+                  id: "1",
+                  title: "Informações sobre nós",
+                },
+                {
+                  id: "2",
+                  title: "Suporte técnico",
+                },
+                {
+                  id: "3",
+                  title: "Fale com um representante",
+                },
+                {
+                  id: "4",
+                  title: "Ver nossos produtos",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    };
+    try {
+      await client.messages.create(listMessage);
+    } catch (error) {
+      console.error("Error sending list message:", error);
+    }
     return {
       statusCode: 200,
       body: "",
