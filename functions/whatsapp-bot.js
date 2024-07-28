@@ -45,24 +45,14 @@ exports.handler = async (event, context) => {
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
     const interactiveMessage = {
-      body: "O que deseja fazer primeiro?",
       from: parsedBody.To,
       to: parsedBody.From,
-      type: "interactive",
-      interactive: {
-        type: "list",
-        header: {
-          type: "text",
-          text: "Menu de Opções",
-        },
-        body: {
-          text: "Escolha uma das opções abaixo:",
-        },
-        footer: {
-          text: "Obrigado por utilizar nosso serviço.",
-        },
-        action: {
-          button: "Escolher",
+      body: "O que deseja fazer primeiro?",
+      persistentAction: [
+        {
+          action: "quick_reply",
+          action_data: "escolher",
+          title: "Escolher",
           sections: [
             {
               title: "Opções",
@@ -91,7 +81,7 @@ exports.handler = async (event, context) => {
             },
           ],
         },
-      },
+      ],
     };
 
     try {
@@ -122,7 +112,7 @@ exports.handler = async (event, context) => {
     );
 
     // Enviar notificação ao representante
-    const representativeNumber = "whatsapp:+<REPRESENTATIVE_PHONE_NUMBER>"; // Coloque o número do representante aqui
+    const representativeNumber = "whatsapp:+5516997342469"; // Coloque o número do representante aqui
     const notificationMessage = `O usuário ${profileName} (${userPhone}) deseja falar com um representante.`;
 
     try {
