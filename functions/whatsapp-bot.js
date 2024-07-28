@@ -1,6 +1,6 @@
 const twilio = require("twilio");
 const querystring = require("querystring");
-import Client from 'twilio.rest'
+import Client from 'twilio'
 
 exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
