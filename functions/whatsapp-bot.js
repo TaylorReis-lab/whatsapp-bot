@@ -4,9 +4,13 @@ exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
   const twiml = new MessagingResponse();
 
-  const message = event.queryStringParameters.Body.toLowerCase();
+  // Verifique se event.queryStringParameters e event.queryStringParameters.Body existem
+  const message =
+    event.queryStringParameters && event.queryStringParameters.Body
+      ? event.queryStringParameters.Body.toLowerCase()
+      : "";
 
-  if (message.includes("Olá")) {
+  if (message.includes("oi")) {
     twiml.message("Olá! Como posso ajudar você hoje?");
   } else if (message.includes("ajuda")) {
     twiml.message("Claro! Aqui está como posso ajudar...");
