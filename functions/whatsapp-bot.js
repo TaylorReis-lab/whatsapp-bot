@@ -1,20 +1,25 @@
 const twilio = require("twilio");
-const bodyParser = require("body-parser");
 
 exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
   const twiml = new MessagingResponse();
 
-  // Parse o corpo da requisição
-  const parsedBody = event.body ? JSON.parse(event.body) : {};
+  let message = "";
 
-  // Verifique se parsedBody.Body existe
-  const message = parsedBody.Body ? parsedBody.Body.toLowerCase() : "";
+  try {
+    // Parse the body of the request safely
+    const parsedBody = event.body ? JSON.parse(event.body) : {};
 
-  // Adicionando logs para depuração
+    // Check if Body property exists
+    message = parsedBody.Body ? parsedBody.Body.toLowerCase() : "";
+  } catch (error) {
+    console.error("Error parsing the request body:", error);
+  }
+
+  // Add logs for debugging
   console.log("Mensagem recebida:", message);
 
-  if (message.includes("Ola" || "oi")) {
+  if (message.includes("oi")) {
     twiml.message("Olá! Como posso ajudar você hoje?");
   } else if (message.includes("ajuda")) {
     twiml.message("Claro! Aqui está como posso ajudar...");
