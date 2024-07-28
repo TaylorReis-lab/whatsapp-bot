@@ -44,14 +44,22 @@ exports.handler = async (event, context) => {
     const profileName = parsedBody.ProfileName || "usuário";
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
-    const listMessage = {
-      to: parsedBody.From,
+    const interactiveMessage = {
+      body: "O que deseja fazer primeiro?",
       from: parsedBody.To,
+      to: parsedBody.From,
       type: "interactive",
       interactive: {
         type: "list",
+        header: {
+          type: "text",
+          text: "Menu de Opções",
+        },
         body: {
-          text: "O que deseja fazer primeiro?",
+          text: "Escolha uma das opções abaixo:",
+        },
+        footer: {
+          text: "Obrigado por utilizar nosso serviço.",
         },
         action: {
           button: "Escolher",
@@ -62,18 +70,22 @@ exports.handler = async (event, context) => {
                 {
                   id: "1",
                   title: "Informações sobre nós",
+                  description: "Saiba mais sobre nossa empresa.",
                 },
                 {
                   id: "2",
                   title: "Suporte técnico",
+                  description: "Obtenha ajuda técnica.",
                 },
                 {
                   id: "3",
                   title: "Fale com um representante",
+                  description: "Converse com um representante.",
                 },
                 {
                   id: "4",
                   title: "Ver nossos produtos",
+                  description: "Confira nossos produtos.",
                 },
               ],
             },
@@ -83,7 +95,7 @@ exports.handler = async (event, context) => {
     };
 
     try {
-      await client.messages.create(listMessage);
+      await client.messages.create(interactiveMessage);
       return {
         statusCode: 200,
         body: "",
