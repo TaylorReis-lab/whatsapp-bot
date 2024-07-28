@@ -30,7 +30,19 @@ exports.handler = async (event, context) => {
   if (message.includes("oi")) {
     twiml.message("Olá! Como posso ajudar você hoje?");
   } else if (message.includes("ajuda")) {
-    twiml.message("Claro! Aqui está como posso ajudar...");
+    twiml.message(
+      "Claro! Aqui está algumas opções: \n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos produtos"
+    );
+  } else if (message.includes('1')) {
+    twiml.message('Informações sobre nós: Somos uma empresa dedicada a...');
+  } else if (message.includes('2')) {
+    twiml.message('Suporte técnico: Por favor, descreva seu problema técnico e nossa equipe irá ajudar.');
+  } else if (message.includes('3')) {
+    twiml.message('Fale com um representante: Conectando você a um representante...');
+  } else if (message.includes('4')) {
+    twiml.message('Ver nossos produtos: Aqui está a lista de nossos produtos...');
+  } else if (message.includes('')) {
+    twiml.message('Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções do menu de ajuda.');
   } else {
     twiml.message("Desculpe, não entendi sua mensagem.");
   }
