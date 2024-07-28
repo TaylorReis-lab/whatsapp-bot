@@ -27,13 +27,15 @@ exports.handler = async (event, context) => {
   // Add logs for debugging
   console.log("Mensagem recebida:", message);
 
+  const client = twilio(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+  );
+
   if (message.includes("oi")) {
-    twiml.message("Olá! Como posso ajudar você hoje?");
+    const profileName = parsedBody.ProfileName || "usuário";
+    twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
-    const client = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
     const listMessage = {
       to: parsedBody.From,
       from: parsedBody.To,
@@ -87,9 +89,26 @@ exports.handler = async (event, context) => {
       "Suporte técnico: Por favor, descreva seu problema técnico e nossa equipe irá ajudar."
     );
   } else if (message.includes("3")) {
+    const profileName = parsedBody.ProfileName || "usuário";
+    const userPhone = parsedBody.WaId;
+
     twiml.message(
       "Fale com um representante: Conectando você a um representante..."
     );
+
+    // Enviar notificação ao representante
+    const representativeNumber = "whatsapp:+<REPRESENTATIVE_PHONE_NUMBER>"; // Coloque o número do representante aqui
+    const notificationMessage = `O usuário ${profileName} (${userPhone}) deseja falar com um representante.`;
+
+    try {
+      await client.messages.create({
+        body: notificationMessage,
+        from: parsedBody.To,
+        to: representativeNumber,
+      });
+    } catch (error) {
+      console.error("Error sending notification to representative:", error);
+    }
   } else if (message.includes("4")) {
     twiml.message(
       "Ver nossos produtos: Aqui está a lista de nossos produtos..."
