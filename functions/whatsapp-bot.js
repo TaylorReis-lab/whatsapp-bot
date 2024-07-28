@@ -27,11 +27,6 @@ exports.handler = async (event, context) => {
   // Add logs for debugging
   console.log("Mensagem recebida:", message);
 
-  const client = twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-  );
-
   if (message.includes("oi")) {
     const profileName = parsedBody.ProfileName || "usuário";
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
