@@ -104,7 +104,7 @@ exports.handler = async (event, context) => {
       "Fale com um representante: Conectando você a um representante..."
     );
 
-    const representativeNumber = "whatsapp:+5564999833928";
+    const representativeNumber = "whatsapp:+556499833928";
     const notificationMessage = `O usuário ${profileName} (https://api.whatsapp.com/send?phone=${userPhone}) deseja falar com um representante.`;
 
     try {
