@@ -35,70 +35,11 @@ exports.handler = async (event, context) => {
 
   if (message.includes("oi")) {
     const profileName = parsedBody.ProfileName || "usuário";
-    twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
+    twiml.message(`Olá ${profileName},  Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
-    const interactiveMessage = {
-      from: parsedBody.To,
-      to: parsedBody.From,
-      type: "interactive",
-      interactive: {
-        type: "list",
-        header: {
-          type: "text",
-          text: "Menu de Ajuda",
-        },
-        body: {
-          text: "O que deseja fazer primeiro?",
-        },
-        footer: {
-          text: "Selecione uma das opções abaixo",
-        },
-        action: {
-          button: "Escolher",
-          sections: [
-            {
-              title: "Opções",
-              rows: [
-                {
-                  id: "1",
-                  title: "Informações sobre nós",
-                  description: "Saiba mais sobre nossa empresa.",
-                },
-                {
-                  id: "2",
-                  title: "Suporte técnico",
-                  description: "Obtenha ajuda técnica.",
-                },
-                {
-                  id: "3",
-                  title: "Fale com um representante",
-                  description: "Converse com um representante.",
-                },
-                {
-                  id: "4",
-                  title: "Ver nossos produtos",
-                  description: "Confira nossos produtos.",
-                },
-              ],
-            },
-          ],
-        },
-      },
-    };
-
-    try {
-      await client.messages.create(interactiveMessage);
-      return {
-        statusCode: 200,
-        body: "",
-      };
-    } catch (error) {
-      console.error("Error sending list message:", error);
-      return {
-        statusCode: 500,
-        body: "Error sending list message",
-      };
-    }
+    twiml.message(
+      "Aqui estão algumas opções para melhor te ajudar: \n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
+    );
   } else if (message.includes("1")) {
     twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
   } else if (message.includes("2")) {
@@ -110,11 +51,11 @@ exports.handler = async (event, context) => {
     const userPhone = parsedBody.WaId;
 
     twiml.message(
-      "Fale com um representante: Conectando você a um representante..."
+      "Conectando você a um representante..."
     );
 
     const representativeNumber = "whatsapp:+556499833928";
-    const notificationMessage = `O usuário ${profileName} (https://api.whatsapp.com/send?phone=${userPhone}) deseja falar com um representante.`;
+    const notificationMessage = `O usuário - ${profileName}, com o numero - (https://api.whatsapp.com/send?phone=${userPhone}), deseja falar com um representante.`;
 
     try {
       await client.messages.create({
@@ -127,9 +68,12 @@ exports.handler = async (event, context) => {
     }
   } else if (message.includes("4")) {
     twiml.message(
-      "Ver nossos produtos: Aqui está a lista de nossos produtos..."
+      "\Planos mensal: 90 Reis\Plano anul: 70 reias * 12 meses\Aula esperimental: Agende já sua aula: <link para agendamento de aula experimental"
     );
-  } else {
+  } else if (message.includes("5")) {
+    twiml.message("Acesse nosso site: (https://gran-fitness-site.netlify.app)");
+  }
+  else {
     twiml.message(
       "Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções do menu de ajuda."
     );
