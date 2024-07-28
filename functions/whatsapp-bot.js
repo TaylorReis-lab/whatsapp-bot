@@ -1,5 +1,6 @@
 const twilio = require("twilio");
 const querystring = require("querystring");
+import Client from 'twilio.rest'
 
 exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
@@ -35,7 +36,7 @@ exports.handler = async (event, context) => {
     const profileName = parsedBody.ProfileName || "usuário";
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
-    const client = twilio(
+    const client = Client(
       process.env.TWILIO_ACCOUNT_SID,
       process.env.TWILIO_AUTH_TOKEN
     );
