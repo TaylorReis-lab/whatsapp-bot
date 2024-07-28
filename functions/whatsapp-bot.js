@@ -38,14 +38,23 @@ exports.handler = async (event, context) => {
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
     const interactiveMessage = {
-      body: "O que deseja fazer primeiro?",
       from: parsedBody.To,
       to: parsedBody.From,
-      persistentAction: JSON.stringify([
-        {
-          action: "quick_reply",
-          action_data: "escolher",
-          title: "Escolher",
+      type: "interactive",
+      interactive: {
+        type: "list",
+        header: {
+          type: "text",
+          text: "Menu de Ajuda",
+        },
+        body: {
+          text: "O que deseja fazer primeiro?",
+        },
+        footer: {
+          text: "Selecione uma das opções abaixo",
+        },
+        action: {
+          button: "Escolher",
           sections: [
             {
               title: "Opções",
@@ -74,7 +83,7 @@ exports.handler = async (event, context) => {
             },
           ],
         },
-      ]),
+      },
     };
 
     try {
