@@ -1,6 +1,5 @@
 const twilio = require("twilio");
 const querystring = require("querystring");
-import Client from 'twilio'
 
 exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
@@ -32,14 +31,19 @@ exports.handler = async (event, context) => {
   // Add logs for debugging
   console.log("Mensagem recebida:", message);
 
+  // Log the environment variables
+  console.log("TWILIO_ACCOUNT_SID:", process.env.TWILIO_ACCOUNT_SID);
+  console.log("TWILIO_AUTH_TOKEN:", process.env.TWILIO_AUTH_TOKEN);
+
+  const client = twilio(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+  );
+
   if (message.includes("oi")) {
     const profileName = parsedBody.ProfileName || "usuário";
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
-    const client = Client(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
     const listMessage = {
       to: parsedBody.From,
       from: parsedBody.To,
@@ -50,9 +54,10 @@ exports.handler = async (event, context) => {
           text: "O que deseja fazer primeiro?",
         },
         action: {
-          button: "Opções",
+          button: "Escolher",
           sections: [
             {
+              title: "Opções",
               rows: [
                 {
                   id: "1",
@@ -105,7 +110,7 @@ exports.handler = async (event, context) => {
     );
 
     // Enviar notificação ao representante
-    const representativeNumber = "whatsapp:+5564999833928"; // Coloque o número do representante aqui
+    const representativeNumber = "whatsapp:+<REPRESENTATIVE_PHONE_NUMBER>"; // Coloque o número do representante aqui
     const notificationMessage = `O usuário ${profileName} (${userPhone}) deseja falar com um representante.`;
 
     try {
