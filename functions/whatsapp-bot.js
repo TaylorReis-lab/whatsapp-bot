@@ -9,7 +9,6 @@ exports.handler = async (event, context) => {
   let parsedBody = {};
 
   try {
-    // Log the raw body for debugging
     console.log("Raw body:", event.body);
 
     if (event.headers["content-type"] === "application/json") {
@@ -18,7 +17,6 @@ exports.handler = async (event, context) => {
       parsedBody = querystring.parse(event.body);
     }
 
-    // Check if Body property exists
     message = parsedBody.Body ? parsedBody.Body.toLowerCase() : "";
   } catch (error) {
     console.error("Error parsing the request body:", error);
@@ -28,12 +26,7 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Add logs for debugging
   console.log("Mensagem recebida:", message);
-
-  // Log the environment variables
-  console.log("TWILIO_ACCOUNT_SID:", process.env.TWILIO_ACCOUNT_SID);
-  console.log("TWILIO_AUTH_TOKEN:", process.env.TWILIO_AUTH_TOKEN);
 
   const client = twilio(
     process.env.TWILIO_ACCOUNT_SID,
@@ -45,10 +38,10 @@ exports.handler = async (event, context) => {
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
     const interactiveMessage = {
+      body: "O que deseja fazer primeiro?",
       from: parsedBody.To,
       to: parsedBody.From,
-      body: "O que deseja fazer primeiro?",
-      persistentAction: [
+      persistentAction: JSON.stringify([
         {
           action: "quick_reply",
           action_data: "escolher",
@@ -81,7 +74,7 @@ exports.handler = async (event, context) => {
             },
           ],
         },
-      ],
+      ]),
     };
 
     try {
@@ -111,9 +104,8 @@ exports.handler = async (event, context) => {
       "Fale com um representante: Conectando você a um representante..."
     );
 
-    // Enviar notificação ao representante
-    const representativeNumber = "whatsapp:+5516997342469"; // Coloque o número do representante aqui
-    const notificationMessage = `O usuário ${profileName} (${userPhone}) deseja falar com um representante.`;
+    const representativeNumber = "whatsapp:+5564999833928";
+    const notificationMessage = `O usuário ${profileName} (https://api.whatsapp.com/send?phone=${userPhone}) deseja falar com um representante.`;
 
     try {
       await client.messages.create({
