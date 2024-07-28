@@ -6,7 +6,7 @@ exports.handler = async (event, context) => {
 
   const message = event.queryStringParameters.Body.toLowerCase();
 
-  if (message.includes("oi")) {
+  if (message.includes("Olá")) {
     twiml.message("Olá! Como posso ajudar você hoje?");
   } else if (message.includes("ajuda")) {
     twiml.message("Claro! Aqui está como posso ajudar...");
