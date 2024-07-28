@@ -22,10 +22,19 @@ exports.handler = async (event, context) => {
     message = parsedBody.Body ? parsedBody.Body.toLowerCase() : "";
   } catch (error) {
     console.error("Error parsing the request body:", error);
+    return {
+      statusCode: 400,
+      body: "Invalid request body",
+    };
   }
 
   // Add logs for debugging
   console.log("Mensagem recebida:", message);
+
+  const client = twilio(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+  );
 
   if (message.includes("oi")) {
     const profileName = parsedBody.ProfileName || "usuário";
@@ -41,10 +50,9 @@ exports.handler = async (event, context) => {
           text: "O que deseja fazer primeiro?",
         },
         action: {
-          button: "Escolher",
+          button: "Opções",
           sections: [
             {
-              title: "Opções",
               rows: [
                 {
                   id: "1",
@@ -68,15 +76,20 @@ exports.handler = async (event, context) => {
         },
       },
     };
+
     try {
       await client.messages.create(listMessage);
+      return {
+        statusCode: 200,
+        body: "",
+      };
     } catch (error) {
       console.error("Error sending list message:", error);
+      return {
+        statusCode: 500,
+        body: "Error sending list message",
+      };
     }
-    return {
-      statusCode: 200,
-      body: "",
-    };
   } else if (message.includes("1")) {
     twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
   } else if (message.includes("2")) {
@@ -92,7 +105,7 @@ exports.handler = async (event, context) => {
     );
 
     // Enviar notificação ao representante
-    const representativeNumber = "whatsapp:+<REPRESENTATIVE_PHONE_NUMBER>"; // Coloque o número do representante aqui
+    const representativeNumber = "whatsapp:+5564999833928"; // Coloque o número do representante aqui
     const notificationMessage = `O usuário ${profileName} (${userPhone}) deseja falar com um representante.`;
 
     try {
