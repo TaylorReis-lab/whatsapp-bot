@@ -19,7 +19,7 @@ const handleMenuSelection = async (selection, parsedBody, client, twiml) => {
 
   switch (selection) {
     case "1":
-      twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
+      twiml.message("Informações sobre nós: Somos uma academia focada em desenvolvimento fisico");
       break;
     case "2":
       twiml.message(
