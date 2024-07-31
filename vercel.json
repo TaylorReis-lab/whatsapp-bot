@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/", "destination": "/functions/whatsapp-bot.js" }]
+}
