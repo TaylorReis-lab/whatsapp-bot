@@ -2,7 +2,7 @@ const twilio = require("twilio");
 const querystring = require("querystring");
 const { sendMessage, handleMenuSelection } = require("../functions/functions");
 
-exports.handler = async (event, context) => {
+module.exports = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
   const twiml = new MessagingResponse();
 
