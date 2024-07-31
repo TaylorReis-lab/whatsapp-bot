@@ -1,9 +1,9 @@
 {
   "name": "whatsapp-bot",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.1",
+  "main": "api-server.js",
   "scripts": {
-    "start": "node functions/whatsapp-bot.js"
+    "start": "node /function/app.js"
   },
   "keywords": [],
   "author": "",
