@@ -1,4 +1,3 @@
-// api/functions.js
 const twilio = require("twilio");
 
 const sendMessage = async (client, from, to, body) => {
