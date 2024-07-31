@@ -1,7 +1,6 @@
-// api/whatsapp-bot.js
 const twilio = require("twilio");
 const querystring = require("querystring");
-const { sendMessage, handleMenuSelection } = require("../functions/app");
+const { sendMessage, handleMenuSelection } = require("../functions/functions");
 
 exports.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
