@@ -31,7 +31,7 @@ const handleMenuSelection = async (selection, parsedBody, client, twiml) => {
         "Conectando você a um representante..."
       );
       const representativeNumber = "whatsapp:+556499833928";
-      const notificationMessage = `O usuário ${profileName} (https://api.whatsapp.com/send?phone=${userPhone}) deseja falar com um representante.`;
+      const notificationMessage = `O usuário ${profileName} deseja falar com um representante.`;
 
       await sendMessage(client, parsedBody.To, representativeNumber, notificationMessage);
       break;
