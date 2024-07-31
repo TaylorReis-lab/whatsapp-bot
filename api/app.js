@@ -34,6 +34,10 @@ module.exports = async (event, context) => {
     process.env.TWILIO_AUTH_TOKEN
   );
 
+  console.log("TWILIO_ACCOUNT_SID:", process.env.TWILIO_ACCOUNT_SID);
+  console.log("TWILIO_AUTH_TOKEN:", process.env.TWILIO_AUTH_TOKEN);
+
+
   if (message.includes("oi")) {
     const profileName = parsedBody.ProfileName || "usuário";
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
