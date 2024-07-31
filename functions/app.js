@@ -1,90 +1,57 @@
+// api/functions.js
 const twilio = require("twilio");
-const querystring = require("querystring");
 
-const App = () => {
-  exports.handler = async (event, context) => {
-    const { MessagingResponse } = twilio.twiml;
-    const twiml = new MessagingResponse();
+const sendMessage = async (client, from, to, body) => {
+  try {
+    await client.messages.create({
+      body: body,
+      from: from,
+      to: to,
+    });
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
 
-    let message = "";
-    let parsedBody = {};
+const handleMenuSelection = async (selection, parsedBody, client, twiml) => {
+  const profileName = parsedBody.ProfileName || "usuário";
+  const userPhone = parsedBody.WaId;
 
-    try {
-      console.log("Raw body:", event.body);
-
-      if (event.headers["content-type"] === "application/json") {
-        parsedBody = JSON.parse(event.body);
-      } else {
-        parsedBody = querystring.parse(event.body);
-      }
-
-      message = parsedBody.Body ? parsedBody.Body.toLowerCase() : "";
-    } catch (error) {
-      console.error("Error parsing the request body:", error);
-      return {
-        statusCode: 400,
-        body: "Invalid request body",
-      };
-    }
-
-    console.log("Mensagem recebida:", message);
-
-    const client = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
-
-    if (message.includes("oi")) {
-      const profileName = parsedBody.ProfileName || "usuário";
-      twiml.message(`Olá ${profileName},  Como posso ajudar você hoje?`);
-    } else if (message.includes("ajuda")) {
-      twiml.message(
-        "Aqui estão algumas opções para melhor te ajudar: \n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
-      );
-    } else if (message.includes("1")) {
+  switch (selection) {
+    case "1":
       twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
-    } else if (message.includes("2")) {
+      break;
+    case "2":
       twiml.message(
         "Suporte técnico: Por favor, descreva seu problema técnico e nossa equipe irá ajudar."
       );
-    } else if (message.includes("3")) {
-      const profileName = parsedBody.ProfileName || "usuário";
-      const userPhone = parsedBody.WaId;
-
-      twiml.message("Conectando você a um representante...");
-
+      break;
+    case "3":
+      twiml.message(
+        "Conectando você a um representante..."
+      );
       const representativeNumber = "whatsapp:+556499833928";
-      const notificationMessage = `O usuário - ${profileName}, com o numero - (https://api.whatsapp.com/send?phone=${userPhone}), deseja falar com um representante.`;
+      const notificationMessage = `O usuário ${profileName} (https://api.whatsapp.com/send?phone=${userPhone}) deseja falar com um representante.`;
 
-      try {
-        await client.messages.create({
-          body: notificationMessage,
-          from: parsedBody.To,
-          to: representativeNumber,
-        });
-      } catch (error) {
-        console.error("Error sending notification to representative:", error);
-      }
-    } else if (message.includes("4")) {
+      await sendMessage(client, parsedBody.To, representativeNumber, notificationMessage);
+      break;
+    case "4":
       twiml.message(
-        "Planos mensal: 90 ReisPlano anul: 70 reias * 12 mesesAula esperimental: Agende já sua aula: <link para agendamento de aula experimental"
+        "Planos mensal: 90 Reis\nPlano anual: 70 reais * 12 meses\nAula experimental: Agende já sua aula: <link para agendamento de aula experimental>"
       );
-    } else if (message.includes("5")) {
-      twiml.message(
-        "Acesse nosso site: (https://gran-fitness-site.netlify.app)"
-      );
-    } else {
+      break;
+    case "5":
+      twiml.message("Acesse nosso site: (https://gran-fitness-site.netlify.app)");
+      break;
+    default:
       twiml.message(
         "Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções do menu de ajuda."
       );
-    }
-
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/xml" },
-      body: twiml.toString(),
-    };
-  };
+      break;
+  }
 };
 
-export default App;
+module.exports = {
+  sendMessage,
+  handleMenuSelection,
+};
