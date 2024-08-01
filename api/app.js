@@ -11,8 +11,6 @@ module.exports = async (event, context) => {
   try {
     console.log("Raw body:", event.body);
 
-    let parsedBody = {};
-
     if (event.headers["content-type"] === "application/json") {
       parsedBody = JSON.parse(event.body);
     } else {
