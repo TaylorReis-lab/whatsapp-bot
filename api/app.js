@@ -7,6 +7,7 @@ module.exports = async (event, context) => {
   const twiml = new MessagingResponse();
 
   let message = "";
+  let parsedBody = [];
 
   try {
     console.log("Raw body:", event.body);
