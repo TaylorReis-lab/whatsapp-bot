@@ -5,6 +5,7 @@ const { sendMessage, handleMenuSelection } = require("../functions/functions");
 module.exports = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
   const twiml = new MessagingResponse();
+  const startTime = Date.now(); 
 
   let message = "";
   let parsedBody = [];
@@ -44,6 +45,9 @@ module.exports = async (event, context) => {
   } else {
     await handleMenuSelection(message, parsedBody, client, twiml);
   }
+
+   const endTime = Date.now();
+   console.log(`Tempo de execução: ${endTime - startTime} ms`);
 
   return {
     statusCode: 200,
