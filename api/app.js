@@ -43,8 +43,12 @@ module.exports = async (event, context) => {
       "Aqui estão algumas opções para melhor te ajudar:\n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
     );
   } else {
-    await handleMenuSelection(message, parsedBody, client, twiml);
-  }
+    try {
+      await handleMenuSelection(message, parsedBody, client, twiml);
+    } catch (error) {
+      console.log("Erro ao requisitar alguma funçao do handligh", error)
+    }
+  } 
 
    const endTime = Date.now();
    console.log(`Tempo de execução: ${endTime - startTime} ms`);
