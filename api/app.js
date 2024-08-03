@@ -21,11 +21,6 @@ module.exports = async (event, context) => {
     };
   }
 
-  const client = twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-  );
-
   try {
     if (message && message.includes("oi")) {
       const profileName = parsedBody.ProfileName || "usuário";
@@ -49,13 +44,20 @@ module.exports = async (event, context) => {
       const representativeNumber = "whatsapp:+556499833928";
       const notificationMessage = `O usuário - ${profileName}, com o número - (https://api.whatsapp.com/send?phone=${userPhone}), deseja falar com um representante.`;
 
+      // Enviar mensagem ao representante sem bloquear a resposta ao usuário
       console.log("Enviando notificação ao representante...");
-
-      await client.messages.create({
-        body: notificationMessage,
-        from: parsedBody.From,
-        to: representativeNumber,
-      });
+      client.messages
+        .create({
+          body: notificationMessage,
+          from: parsedBody.From,
+          to: representativeNumber,
+        })
+        .then(() => {
+          console.log("Notificação enviada ao representante.");
+        })
+        .catch((error) => {
+          console.error("Erro ao enviar notificação ao representante:", error);
+        });
     } else if (message.includes("4")) {
       twiml.message(
         "Plano mensal: 90 Reais. Plano anual: 70 Reais * 12 meses. Aula experimental: Agende já sua aula: <link para agendamento de aula experimental>"
