@@ -14,7 +14,6 @@ const sendMessage = async (client, from, to, body) => {
 
 const handleMenuSelection = async (selection, parsedBody, client, twiml) => {
   const profileName = parsedBody.ProfileName || "usuário";
-  const userPhone = parsedBody.WaId;
 
   switch (selection) {
     case "1":
