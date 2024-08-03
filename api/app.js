@@ -26,7 +26,7 @@ module.exports = async (event, context) => {
     process.env.TWILIO_AUTH_TOKEN
   );
 
-  if (message.includes("oi")) {
+  if (message && message.includes("oi")) {
     const profileName = parsedBody.ProfileName || "usuário";
     twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
   } else if (message.includes("ajuda")) {
