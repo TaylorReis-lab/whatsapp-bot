@@ -8,8 +8,8 @@ module.exports = async (event, context) => {
   let parsedBody = {};
 
   try {
-    const parsedBody = JSON.parse(JSON.stringify(event.body));
-
+    parsedBody =
+      typeof event.body === "string" ? JSON.parse(event.body) : event.body;
     message = parsedBody.Body ? parsedBody.Body.toLowerCase().trim() : null;
 
     console.log("Mensagem recebida:", message);
@@ -26,56 +26,62 @@ module.exports = async (event, context) => {
     process.env.TWILIO_AUTH_TOKEN
   );
 
-  if (message && message.includes("oi")) {
-    const profileName = parsedBody.ProfileName || "usuário";
-    twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
-  } else if (message.includes("ajuda")) {
-    twiml.message(
-      "Aqui estão algumas opções para melhor te ajudar:\n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
-    );
-  } else if (message.includes("ajuda")) {
-    twiml.message(
-      "Aqui estão algumas opções para melhor te ajudar: \n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
-    );
-  } else if (message.includes("1")) {
-    twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
-  } else if (message.includes("2")) {
-    twiml.message(
-      "Suporte técnico: Por favor, descreva seu problema técnico e nossa equipe irá ajudar."
-    );
-  } else if (message.includes("3")) {
-    const profileName = parsedBody.ProfileName || "usuário";
-    const userPhone = parsedBody.WaId;
+  try {
+    if (message && message.includes("oi")) {
+      const profileName = parsedBody.ProfileName || "usuário";
+      twiml.message(`Olá, ${profileName}! Como posso ajudar você hoje?`);
+    } else if (message.includes("ajuda")) {
+      twiml.message(
+        "Aqui estão algumas opções para melhor te ajudar:\n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
+      );
+    } else if (message.includes("1")) {
+      twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
+    } else if (message.includes("2")) {
+      twiml.message(
+        "Suporte técnico: Por favor, descreva seu problema técnico e nossa equipe irá ajudar."
+      );
+    } else if (message.includes("3")) {
+      const profileName = parsedBody.ProfileName || "usuário";
+      const userPhone = parsedBody.WaId;
 
-    twiml.message("Conectando você a um representante...");
+      twiml.message("Conectando você a um representante...");
 
-    const representativeNumber = "whatsapp:+556499833928";
-    const notificationMessage = `O usuário - ${profileName}, com o numero - (https://api.whatsapp.com/send?phone=${userPhone}), deseja falar com um representante.`;
+      const representativeNumber = "whatsapp:+556499833928";
+      const notificationMessage = `O usuário - ${profileName}, com o número - (https://api.whatsapp.com/send?phone=${userPhone}), deseja falar com um representante.`;
 
-    try {
+      console.log("Enviando notificação ao representante...");
+
       await client.messages.create({
         body: notificationMessage,
         from: parsedBody.From,
         to: representativeNumber,
       });
-    } catch (error) {
-      console.error("Error sending notification to representative:", error);
+    } else if (message.includes("4")) {
+      twiml.message(
+        "Plano mensal: 90 Reais. Plano anual: 70 Reais * 12 meses. Aula experimental: Agende já sua aula: <link para agendamento de aula experimental>"
+      );
+    } else if (message.includes("5")) {
+      twiml.message(
+        "Acesse nosso site: (https://gran-fitness-site.netlify.app)"
+      );
+    } else {
+      twiml.message(
+        "Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções do menu de ajuda."
+      );
     }
-  } else if (message.includes("4")) {
-    twiml.message(
-      "Planos mensal: 90 ReisPlano anul: 70 reias * 12 mesesAula esperimental: Agende já sua aula: <link para agendamento de aula experimental"
-    );
-  } else if (message.includes("5")) {
-    twiml.message("Acesse nosso site: (https://gran-fitness-site.netlify.app)");
-  } else {
-    twiml.message(
-      "Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções do menu de ajuda."
-    );
-  }
 
-  return {
-    statusCode: 200,
-    headers: { "Content-Type": "application/xml" },
-    body: twiml.toString(),
-  };
+    console.log("Respondendo ao usuário...");
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/xml" },
+      body: twiml.toString(),
+    };
+  } catch (error) {
+    console.error("Erro ao processar a mensagem:", error);
+    return {
+      statusCode: 500,
+      body: "Erro no processamento da mensagem",
+    };
+  }
 };
