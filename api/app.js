@@ -1,7 +1,10 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 const twilio = require("twilio");
 const querystring = require("querystring");
 
-exports.handler = async (event, context) => {
+<SpeedInsights />
+module.handler = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
   const twiml = new MessagingResponse();
 
