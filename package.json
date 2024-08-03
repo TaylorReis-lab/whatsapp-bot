@@ -12,9 +12,7 @@
   "dependencies": {
     "@vercel/speed-insights": "^1.0.12",
     "express": "^4.19.2",
+    "twilio": "^5.2.2",
     "whatsapp-bot": "file:"
-  },
-  "devDependencies": {
-    "twilio": "^5.2.2"
   }
 }
