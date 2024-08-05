@@ -1,4 +1,4 @@
-const twilio = require("twilio");
+import twilio from "twilio";
 
 module.exports = async (event, context) => {
   const { MessagingResponse } = twilio.twiml;
