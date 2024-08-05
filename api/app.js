@@ -1,11 +1,10 @@
-import twilio from "twilio";
-
 module.exports = async (event, context) => {
-  const { MessagingResponse } = twilio.twiml;
+  const MessagingResponse = require("twilio").twiml.MessagingResponse;
+
   const twiml = new MessagingResponse();
 
-  let message = "";
   let parsedBody = {};
+  let message = "";
 
   try {
     parsedBody =
@@ -30,7 +29,9 @@ module.exports = async (event, context) => {
         "Aqui estão algumas opções para melhor te ajudar:\n1. Informações sobre nós\n2. Suporte técnico\n3. Fale com um representante\n4. Ver nossos planos\n5. Nosso site"
       );
     } else if (message.includes("1")) {
-      twiml.message("Informações sobre nós: Somos uma empresa dedicada a...");
+      twiml.message(
+        "Informações sobre nós: Somos uma empresa dedicada a..."
+      );
     } else if (message.includes("2")) {
       twiml.message(
         "Suporte técnico: Por favor, descreva seu problema técnico e nossa equipe irá ajudar."
@@ -71,12 +72,13 @@ module.exports = async (event, context) => {
     }
 
     console.log("Respondendo ao usuário...");
+    console.log("Reposta do meu console", twiml.toString());
 
     return {
-      statusCode: 200,
       headers: { "Content-Type": "application/xml" },
       body: twiml.toString(),
     };
+
   } catch (error) {
     console.error("Erro ao processar a mensagem:", error);
     return {
