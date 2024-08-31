@@ -1,4 +1,4 @@
-const twilio = require("twilio")
+const twilio = require("twilio");
 
 module.exports = async (event, context) => {
   try {
@@ -25,9 +25,6 @@ module.exports = async (event, context) => {
       statusCode: 200,
       headers: {
         "Content-Type": "application/xml",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
       },
       body: twiml.toString(),
     };
